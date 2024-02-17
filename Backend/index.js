@@ -1,11 +1,10 @@
 const express= require('express')
 const app =express();
-
 const path = require('path')
 const envPath=path.resolve(__dirname,"../.env")
 const dotenv=require('dotenv');
 dotenv.config({path:envPath})
-require('./db')
+require('./config/db')
 const PORT=process.env.PORT;
 const userRoutes=require('./routes/userRoutes')
 const taskRoutes=require('./routes/taskRoutes')
