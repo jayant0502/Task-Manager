@@ -12,8 +12,8 @@ const taskSchema= new mongoose.Schema({
         required:true
     },
     status:{
-        type:Boolean,
-        default:false
+        type:String,
+        required:false
     },
     owner:{
         type:mongoose.Schema.Types.ObjectId,
@@ -21,6 +21,8 @@ const taskSchema= new mongoose.Schema({
         required:true
     }
 
+},{
+    timestamps:true,
 })
 
 const Task = mongoose.model("Task",taskSchema);

@@ -1,23 +1,59 @@
-const express= require('express')
-const app =express();
-const path = require('path')
-const envPath=path.resolve(__dirname,"../.env")
-const dotenv=require('dotenv');
-dotenv.config({path:envPath})
-require('./config/db')
-const PORT=process.env.PORT;
-const userRoutes=require('./routes/userRoutes')
-const taskRoutes=require('./routes/taskRoutes')
+const express = require("express");
+const app = express();
+const server = require("http").createServer(app);
+const { Server: SocketServer } = require("socket.io");
+const cors = require("cors");
 
+const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-app.use(express.json())
-app.use('/users',userRoutes)
-app.use('/task',taskRoutes)
+const PORT = process.env.PORT;
+require("./config/db");
 
-app.get('/',(req,res)=>{
-    res.json({message:'Task Manager API is working'})
-})
+const userRoutes = require("./routes/userRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
-app.listen(PORT,()=>{
-    console.log(`Server is running on port ${PORT}.`)
-})
+app.use(express.json());
+app.use("/users", userRoutes);
+app.use("/tasks", taskRoutes);
+
+app.get("/", (req, res) => {
+  res.json({ message: "Task Manager API is working" });
+});
+
+const corsOptions = {
+  origin: "http://localhost:3000", // Allow requests from this origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers
+};
+
+app.use(cors(corsOptions));
+
+const io = new SocketServer(server, {
+  cors: {
+    origin: "http://localhost:8000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+  // socket.on("taskAdded", (task) => {
+  //   console.log("New task added:", task);
+  //   socket.broadcast.emit("taskAdded", task);
+  // });
+
+  socket.on("error", (error) => {
+    console.error("Socket error:", error);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
