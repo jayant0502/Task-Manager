@@ -23,31 +23,47 @@ app.get("/", (req, res) => {
 });
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Allow requests from this origin
+  origin: "*", // Allow requests from this origin
   methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
 
 const io = new SocketServer(server, {
   cors: {
-    origin: "http://localhost:8000",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers
     credentials: true,
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
 
+
+io.on("connection", (socket) => {
+  
+  console.log("A user connected:", socket.id); 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
-  // socket.on("taskAdded", (task) => {
-  //   console.log("New task added:", task);
-  //   socket.broadcast.emit("taskAdded", task);
-  // });
+
+  socket.on("taskAdded", (task) => {
+    io.emit("taskAddedSuccessfully", task);
+    console.log("New task added:", task);
+    
+  });
+  socket.on("taskDeleted", (task) => {
+    io.emit("taskDeletedSuccessfully", task);
+    console.log("New task added:", task);
+    
+  });
+  socket.on("taskUpdated", (task) => {
+    io.emit("taskUpdatedSuccessfully", task);
+    console.log("New task added:", task);
+    
+  });
 
   socket.on("error", (error) => {
     console.error("Socket error:", error);

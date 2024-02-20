@@ -1,117 +1,107 @@
-    
-const Task = require('../models/Task');
-    const io = require('socket.io')();
+const Task = require("../models/Task");
 
-    const getTask = async (req, res) => {
-        try {
-            
-            const tasks = await Task.find({owner:req.user._id});
+const getTask = async (req, res) => {
+  try {
+    const tasks = await Task.find({ owner: req.user._id });
 
-            res.status(200).send({ tasks, count:tasks.length , message: "Task fetched successfully" });
-            io.emit("taskAdded", tasks);
-        
-        } catch (error) {
-            res.status(400).send({ message: error.message });
-        }
+    res
+      .status(200)
+      .send({
+        tasks,
+        count: tasks.length,
+        message: "Task fetched successfully",
+      });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+};
+
+const addTask = async (req, res) => {
+  try {
+    const task = new Task({
+      ...req.body,
+      owner: req.user._id,
+    });
+
+    await task.save();
+
+    res.status(200).send({ task, message: "Task saved successfully" });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+};
+const getTaskById = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+
+    const task = await Task.findOne({
+      _id: taskId,
+      owner: req.user._id,
+    });
+
+    if (!task) {
+      return res.status(404).send({ error: "Task not found" });
     }
 
-    const addTask = async (req, res) => {
+    res.status(200).send({ task, message: "Task fetched successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
 
-    try{
-            const task = new Task(
-                {
-                    ...req.body,
-                    owner: req.user._id
-                }
-            )
+const updateTask = async (req, res) => {
+  const taskId = req.params.id;
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["title", "description", "status"];
 
-            await task.save();
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid updates" });
+  }
+  try {
+    const task = await Task.findOne({
+      _id: taskId,
+      owner: req.user._id,
+    });
 
-            
-             io.emit("taskAdded", task);
-            res.status(200).send({ task, message: "Task saved successfully" });
-    }
-    catch(error){
-        res.status(400).send({ message: error.message });
-    }
-    }
-    const getTaskById = async (req, res) => {
-        try {
-            const taskId = req.params.id;
-
-            const task = await Task.findOne({
-                _id: taskId,
-                owner: req.user._id
-            });
-
-            if (!task) {
-                return res.status(404).send({ error: "Task not found" });
-            }
-
-            res.status(200).send({ task, message: "Task fetched successfully" });
-        } catch (error) {
-            res.status(400).send({ error: error.message });
-        }
-    };
-
-
-    const updateTask = async (req, res) => {
-        
-        const taskId = req.params.id;
-        const updates=Object.keys(req.body);
-        const allowedUpdates = ['title', 'description', 'status'];
-
-        const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-        if (!isValidOperation) {
-            return res.status(400).send({ error: "Invalid updates" });
-        }
-        try {
-            const task = await Task.findOne({
-                _id: taskId,
-                owner: req.user._id
-            })
-
-            if(!task){
-                return res.status(404).send({ error:"Task not found" });
-            }
-
-            updates.forEach((update)=>task[update]= req.body[update])
-            await task.save()
-            io.emit("taskAdded", task);
-            res.status(200).send({ task, message: "Task updated successfully" });
-        } catch (error){
-            res.status(400).send({ error: error.message });
-        }
+    if (!task) {
+      return res.status(404).send({ error: "Task not found" });
     }
 
+    updates.forEach((update) => (task[update] = req.body[update]));
+    await task.save();
 
-    const deleteTask = async (req, res) => {
+    res.status(200).send({ task, message: "Task updated successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
 
-        const taskId = req.params.id;
+const deleteTask = async (req, res) => {
+  const taskId = req.params.id;
 
-        try{
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: taskId,
+      owner: req.user._id,
+    });
 
-            const task = await Task.findOneAndDelete({
-                _id: taskId,
-                owner: req.user._id
-            })
-
-            if(!task) {
-                return res.status(404).send({ error: "Task not found" });
-            }
-
-            res.status(200).send({ task, message: "Task deleted successfully" });
-            io.emit("taskAdded", taskId);
-        }
-        catch(error){
-            res.status(400).send({ error: error.message });
-        }
+    if (!task) {
+      return res.status(404).send({ error: "Task not found" });
     }
 
-    module.exports = {
-        getTask,
-        addTask,
-        getTaskById,
-        updateTask,
-        deleteTask
-    };
+    res.status(200).send({ task, message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+module.exports = {
+  getTask,
+  addTask,
+  getTaskById,
+  updateTask,
+  deleteTask,
+};

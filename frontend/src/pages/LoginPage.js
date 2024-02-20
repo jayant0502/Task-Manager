@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 import axios from 'axios';
 
 function LoginPage() {
@@ -19,7 +19,8 @@ function LoginPage() {
       localStorage.setItem('token', token); // Store the token in local storage
       navigate('/tasks'); // Redirect to tasks page upon successful login
     } catch (error) {
-      setError(error.response.data.message);
+      setError(error.response?.data?.message);
+      console.log(error.response?.data?.message);
     }
   };
 
@@ -35,7 +36,9 @@ function LoginPage() {
           <label>Password:</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" >Login</button>
+
+        <Link to='/register'>Create a account</Link>
       </form>
       {error && <p>{error}</p>}
     </div>
