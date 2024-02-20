@@ -37,10 +37,10 @@ Real-time Updates: Tasks are updated in real-time across all connected clients u
 
     Create a .env file in the root directory of the backend. Define the following environment variables:
 
-        -PORT: Port number for the server to listen on.
-        -MONGODB_URI: URI for connecting to the MongoDB database.
-        -JWT_SECRET: Secret key for JWT token generation.
-        -DB_NAME: Name of Database
+        PORT: Port number for the server to listen on.
+        MONGODB_URI: URI for connecting to the MongoDB database.
+        JWT_SECRET: Secret key for JWT token generation.
+        DB_NAME: Name of Database
 
     Example .env file:
 
@@ -114,7 +114,7 @@ Real-time Updates: Tasks are updated in real-time across all connected clients u
 ### Authentication
 
 - POST /users/register: Register a new user.
-  - POST /users/login: Login with existing user credentials.
+- POST /users/login: Login with existing user credentials.
 
 ### Task Management
 
