@@ -3,8 +3,6 @@ import AppRouter from "./AppRouter";
 import io from "socket.io-client";
 
 function App() {
-  
-  
   useEffect(() => {
     // Establish a WebSocket connection to the server
     const socket = io.connect("http://localhost:8000", {
@@ -20,11 +18,8 @@ function App() {
     // Add event listeners for handling incoming events
     socket.on("taskAddedSuccessfully", (task) => {
       console.log("New task added to list:", task);
-      // socket.emit("taskAdded", task);
       // Handle the task update in the UI (e.g., update state or trigger a refresh)
     });
-
-    
 
     // Clean up the socket connection on component unmount
     return () => {

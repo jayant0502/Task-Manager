@@ -6,7 +6,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-    const navigate=useNavigate()
+  const navigate=useNavigate()
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -18,8 +18,6 @@ const RegisterPage = () => {
       const { token } = response.data;
       localStorage.setItem('token', token);
       // Redirect to another page upon successful registration, such as the tasks page
-      // You can use the useHistory hook from react-router-dom for navigation
-      // Example: history.push('/tasks');
       navigate('/')
     } catch (error) {
       setError(error.response.data.message);

@@ -1,9 +1,9 @@
 // AppRouter.js
 import React from 'react';
 import { Routes, Route } from 'react-router';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './pages/user/LoginPage';
 import TaskPage from './pages/TaskPage';
-import RegisterPage from './pages/RegisterPage';
+import RegisterPage from './pages/user/RegisterPage';
 
 function AppRouter() {
   return (

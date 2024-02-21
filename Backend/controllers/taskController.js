@@ -4,13 +4,11 @@ const getTask = async (req, res) => {
   try {
     const tasks = await Task.find({ owner: req.user._id });
 
-    res
-      .status(200)
-      .send({
-        tasks,
-        count: tasks.length,
-        message: "Task fetched successfully",
-      });
+    res.status(200).send({
+      tasks,
+      count: tasks.length,
+      message: "Task fetched successfully",
+    });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
@@ -25,11 +23,12 @@ const addTask = async (req, res) => {
 
     await task.save();
 
-    res.status(200).send({ task, message: "Task saved successfully" });
+    res.status(200).send({ task, message: "Task created successfully" });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
 };
+
 const getTaskById = async (req, res) => {
   try {
     const taskId = req.params.id;
