@@ -10,7 +10,7 @@ const taskRoutes = require("./routes/taskRoutes");
 require("./config/db");
 
 // configuration to access env variables
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
 const PORT = process.env.PORT;
 
 const corsOptions = {

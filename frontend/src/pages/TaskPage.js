@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import TaskCard from '../components/Card/TaskCard';
 
 const socket = io('http://localhost:8000');
 const AddTaskForm = () => {
@@ -61,6 +62,10 @@ const AddTaskForm = () => {
         </div>
         <button type="submit">Add Task</button>
       </form>
+
+      <div>
+        <TaskCard title={title} description={description} status={status}></TaskCard>
+      </div>
     </div>
   );
 };
