@@ -14,6 +14,7 @@ function LoginPage() {
   const [timeoutId, setTimeoutId] = useState(null);
   const {
     register,
+
     handleSubmit,
     reset,
     formState: { errors },
@@ -33,12 +34,12 @@ function LoginPage() {
 
       localStorage.setItem("token", token); // Store the token in local storage
       setLoginSuccess(true);
-      setTimeoutId(
-        setTimeout(() => {
-          navigate("/tasks");
-          reset();
-        }, 2000)
-      );
+
+      const id = setTimeout(() => {
+        navigate("/home");
+        reset();
+      }, 2000);
+      setTimeoutId(id);
     } catch (err) {
       console.error("API call failed:", err);
       if (err.response && err.response.status === 400) {
@@ -47,10 +48,15 @@ function LoginPage() {
           type: "manual",
           message: message,
         });
-
       } else {
         console.log(err);
       }
+
+      const id = setTimeout(() => {
+        clearErrors();
+      }, 3000);
+
+      setTimeoutId(id)
     }
   };
 
@@ -60,7 +66,7 @@ function LoginPage() {
         clearTimeout(timeoutId);
       }
     };
-  }, []);
+  }, [timeoutId]);
 
   return (
     <Box
@@ -139,7 +145,7 @@ function LoginPage() {
                 "radial-gradient(circle at -8.9% 51.2%, rgb(255, 124, 0) 0%, rgb(255, 124, 0) 15.9%, rgb(255, 163, 77) 15.9%, rgb(255, 163, 77) 24.4%, rgb(19, 30, 37) 24.5%, rgb(19, 30, 37) 66%)",
             }}
           >
-           Submit
+            Submit
           </Button>
           <Link
             to="/register"
@@ -157,14 +163,7 @@ function LoginPage() {
         <Stack sx={{ width: "100%", marginTop: "1rem" }}>
           {loginSuccess && <Alert severity="success">Login successful</Alert>}
           {errors.notfound && (
-            <Alert
-              severity="error"
-              onClose={() => {
-                clearErrors();
-              }}
-            >
-              {errors.notfound?.message}
-            </Alert>
+            <Alert severity="error">{errors.notfound?.message}</Alert>
           )}
         </Stack>
       </Paper>

@@ -30,12 +30,17 @@ const RegisterPage = () => {
         // console.log(res);
         localStorage.setItem("token", res.data.token);
         setRegistered(true);
-        setTimeoutId(
-          setTimeout(() => {
+        
+        const id=  setTimeout(() => {
             navigate("/");
             reset();
           }, 1000)
-        );
+       setTimeoutId(id)
+
+        const id1=setTimeout(()=>{
+          setRegistered(false);
+        },3000)
+        setTimeoutId(id1)
       })
       .catch((err) => {
         if (err.response && err.response.status === 400) {
@@ -43,6 +48,10 @@ const RegisterPage = () => {
         } else {
           console.log(err);
         }
+        const id =setTimeout(()=>{
+          clearErrors()
+        },3000)
+        setTimeoutId(id)
       });
   };
 
@@ -50,7 +59,7 @@ const RegisterPage = () => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-  }, []);
+  }, [timeoutId]);
 
   return (
     <Box
@@ -165,9 +174,7 @@ const RegisterPage = () => {
           {registered && (
             <Alert
               severity="success"
-              onClose={() => {
-                setRegistered(false);
-              }}
+              
             >
               Registration Successful
             </Alert>
@@ -175,9 +182,7 @@ const RegisterPage = () => {
           {errors.register && (
             <Alert
               severity="error"
-              onClose={() => {
-                clearErrors();
-              }}
+              
             >
               {errors.register?.message}
             </Alert>
