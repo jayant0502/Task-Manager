@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import {
@@ -16,14 +16,22 @@ import {
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
-
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 
 const socket = io("http://localhost:8000");
 
 const AddTaskModal = () => {
   const [open, setOpen] = useState(false);
   const [taskAdded, setTaskAdded] = useState(false);
-  const { register, handleSubmit, formState: { errors }, reset, setValue, clearErrors, setError } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    clearErrors,
+    setError,
+  } = useForm();
   const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
@@ -49,7 +57,11 @@ const AddTaskModal = () => {
       const ownerId = tokenPayload._id;
       const config = { headers: { Authorization: `bearer ${token}` } };
 
-      const response = await axios.post("http://localhost:8000/tasks/addTask", { ...data, ownerId }, config);
+      const response = await axios.post(
+        "http://localhost:8000/tasks/addTask",
+        { ...data, ownerId },
+        config
+      );
       setTaskAdded(true);
       socket.emit("taskAdded", response.data);
 
@@ -63,7 +75,7 @@ const AddTaskModal = () => {
     } catch (error) {
       console.error("Error", error);
       if (error.response && error.response.status === 400) {
-        setError("failed", { type: 'manual', message: "Failed adding task" });
+        setError("failed", { type: "manual", message: "Failed adding task" });
       }
       const id = setTimeout(() => {
         clearErrors();
@@ -73,7 +85,8 @@ const AddTaskModal = () => {
   };
   return (
     <Box>
-      <Button onClick={handleOpen}>Add New Task</Button>
+      <Button onClick={handleOpen}><AddCircleRoundedIcon fontSize="large" color="dark"  /></Button>
+      
       <Modal
         open={open}
         onClose={handleOpen}

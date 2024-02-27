@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import AppRouter from "./AppRouter";
 import io from "socket.io-client";
+import TaskProvider from "./context/TaskProvider";
 
 function App() {
   useEffect(() => {
@@ -29,7 +30,10 @@ function App() {
 
   return (
     <div className="App">
-      <AppRouter />
+
+     <TaskProvider>
+        <AppRouter />
+      </TaskProvider>
     </div>
   );
 }

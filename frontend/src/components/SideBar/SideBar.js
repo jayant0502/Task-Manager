@@ -15,9 +15,9 @@ import { Box, Paper } from "@mui/material";
 const drawerWidth = 200;
 const openedMixin = (theme) => ({
   width: drawerWidth,
-  height: "90vh",
-  position: "absolute",
-  //   inset: "0",
+  height: `calc(${theme.spacing("100%")})`,
+  //   position: "absolute",
+
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -31,11 +31,11 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
 
-  position: "absolute",
-  //   inset: "0",
+  //   position: "absolute",
+
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
-  height: "90vh",
+  height: `calc(${theme.spacing("100%")})`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
@@ -47,8 +47,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
-  position: "relative",
-  padding: theme.spacing(0, 1),
+//   position: "relative",
+ 
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
@@ -56,8 +56,13 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-    height: `calc(${theme.spacing("90%")})`,
-//   flexShrink: 0,
+  width: drawerWidth,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+
+  //   height: `calc(${theme.spacing("100vh")})`,
+  flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
   ...(open && {
@@ -83,11 +88,13 @@ const SideBar = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",        
-        height: "100vh",
+        justifyContent: "center",
       }}
     >
-      <Paper elevation={3} sx={{ height: "90%" }}>
+      <Paper
+        elevation={3}
+        sx={{ height: "90%", position: "relative", width: "100%" }}
+      >
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
             <IconButton onClick={handleDrawerOpen}>

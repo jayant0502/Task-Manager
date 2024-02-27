@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 
+
 function LoginPage() {
   const navigate = useNavigate();
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -33,6 +34,12 @@ function LoginPage() {
       const { token } = response.data;
 
       localStorage.setItem("token", token); // Store the token in local storage
+
+      const parsedToken=JSON.parse(atob(token.split('.')[1]))
+      const userId = parsedToken._id;
+
+      sessionStorage.setItem("userId", userId);
+
       setLoginSuccess(true);
 
       const id = setTimeout(() => {

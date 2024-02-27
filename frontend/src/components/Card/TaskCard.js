@@ -6,7 +6,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-const TaskCard = ({ title, description, status, date }) => {
+const TaskCard = ({ title, description, status }) => {
   return (
     <Box>
       <Card sx={{ minWidth: 275 }}>
@@ -18,10 +18,9 @@ const TaskCard = ({ title, description, status, date }) => {
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             {description}
           </Typography>
-          
         </CardContent>
         <CardActions>
-          <Button size="small" >{status}</Button>
+          <Button size="small">{status}</Button>
         </CardActions>
       </Card>
     </Box>
