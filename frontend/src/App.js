@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppRouter from "./AppRouter";
 import io from "socket.io-client";
 import TaskProvider from "./context/TaskProvider";
 
 function App() {
+
+  const [tasks , setTasks]= useState([])
   useEffect(() => {
     // Establish a WebSocket connection to the server
     const socket = io.connect("http://localhost:8000", {
@@ -20,6 +22,12 @@ function App() {
     socket.on("taskAddedSuccessfully", (task) => {
       console.log("New task added to list:", task);
       // Handle the task update in the UI (e.g., update state or trigger a refresh)
+      setTasks((prevTasks)=>[...prevTasks, task])
+    });
+    socket.on("taskDeletedSuccessfully", (task) => {
+      console.log("Task deletd form the list:", task);
+      // Handle the task update in the UI (e.g., update state or trigger a refresh)
+      
     });
 
     // Clean up the socket connection on component unmount
@@ -31,7 +39,7 @@ function App() {
   return (
     <div className="App">
 
-     <TaskProvider>
+     <TaskProvider tasks={tasks}>
         <AppRouter />
       </TaskProvider>
     </div>

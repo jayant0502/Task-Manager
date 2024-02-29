@@ -45,7 +45,7 @@ function LoginPage() {
       const id = setTimeout(() => {
         navigate("/home");
         reset();
-      }, 2000);
+      }, 1000);
       setTimeoutId(id);
     } catch (err) {
       console.error("API call failed:", err);

@@ -2,38 +2,21 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  InputLabel,
-  FormControl,
-  Select,
-  MenuItem,
-  Modal,
-  FormHelperText,
+  Box,  
+  Button,  
 } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
 import { useForm } from "react-hook-form";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import TaskModal from "./Modal";
 
 const socket = io("http://localhost:8000");
 
 const AddTaskModal = () => {
   const [open, setOpen] = useState(false);
   const [taskAdded, setTaskAdded] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    clearErrors,
-    setError,
-  } = useForm();
+  const { reset, setValue, clearErrors, setError } = useForm();
   const [timeoutId, setTimeoutId] = useState(null);
-
+  const [customErrors, setCustomErrors] = useState({});
   useEffect(() => {
     return () => {
       if (timeoutId) {
@@ -60,7 +43,7 @@ const AddTaskModal = () => {
       const response = await axios.post(
         "http://localhost:8000/tasks/addTask",
         { ...data, ownerId },
-        config
+        
       );
       setTaskAdded(true);
       socket.emit("taskAdded", response.data);
@@ -70,24 +53,28 @@ const AddTaskModal = () => {
       }, 3000);
       setTimeoutId(id);
 
-      reset();
       setValue("status", "");
+      reset();
     } catch (error) {
       console.error("Error", error);
-      if (error.response && error.response.status === 400) {
-        setError("failed", { type: "manual", message: "Failed adding task" });
+
+      if (error.response && (error.response.status === 401||400||404)) {
+        setCustomErrors({ type: "manual", message: "Failed adding task" });
       }
-      const id = setTimeout(() => {
-        clearErrors();
-      }, 3000);
-      setTimeoutId(id);
+      console.log(customErrors?.message);
+      // const id = setTimeout(() => {
+      //   clearErrors();
+      // }, 3000);
+      // setTimeoutId(id);
     }
   };
   return (
     <Box>
-      <Button onClick={handleOpen}><AddCircleRoundedIcon fontSize="large" color="dark"  /></Button>
-      
-      <Modal
+      <Button onClick={handleOpen}>
+        <AddCircleRoundedIcon fontSize="large" />
+      </Button>
+
+      {/* <Modal
         open={open}
         onClose={handleOpen}
         aria-labelledby="add-task-modal"
@@ -128,6 +115,7 @@ const AddTaskModal = () => {
                   margin: "1rem 0 0.5rem 0",
                 }}
                 label="Description"
+                placeholder="Enter description"
                 multiline
                 fullWidth
                 {...register("description", {
@@ -152,6 +140,8 @@ const AddTaskModal = () => {
                   labelId="demo-simple-select-error-label"
                   id="demo-simple-select-error"
                   label="Status"
+                  defaultValue={""}
+                  // value={register.status || ""}
                   {...register("status", { required: "Status is required" })}
                 >
                   <MenuItem value={"active"}>Active</MenuItem>
@@ -183,7 +173,15 @@ const AddTaskModal = () => {
             )}
           </Stack>
         </Box>
-      </Modal>
+      </Modal> */}
+
+      <TaskModal
+        opened={open}
+        onSubmit={onSubmit}
+        handleClose={handleOpen}
+        taskAdded={taskAdded}
+        customErrors={customErrors}
+      />
     </Box>
   );
 };

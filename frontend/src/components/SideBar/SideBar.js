@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ListItem from "@mui/material/ListItem";
@@ -10,14 +10,15 @@ import MailIcon from "@mui/icons-material/Mail";
 import MuiDrawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import { styled } from "@mui/material/styles";
-import { Box, Paper } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
+import { TaskContext } from "../../context/TaskProvider";
 
 const drawerWidth = 200;
 const openedMixin = (theme) => ({
   width: drawerWidth,
   height: `calc(${theme.spacing("100%")})`,
-  //   position: "absolute",
-
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -31,8 +32,6 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
 
-  //   position: "absolute",
-
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   height: `calc(${theme.spacing("100%")})`,
@@ -44,12 +43,13 @@ const closedMixin = (theme) => ({
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-//   position: "relative",
- 
-  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+const DrawerFooter = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
 }));
 
@@ -60,8 +60,6 @@ const Drawer = styled(MuiDrawer, {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-
-  //   height: `calc(${theme.spacing("100vh")})`,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
@@ -77,9 +75,20 @@ const Drawer = styled(MuiDrawer, {
 
 const SideBar = () => {
   const [open, setOpen] = React.useState(false);
+  const { resetTasks } = useContext(TaskContext);
 
+  const navigate = useNavigate();
   const handleDrawerOpen = () => {
     setOpen((prev) => !prev);
+  };
+
+  const handleSwitch = () => {};
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    resetTasks();
+    
+    navigate("/");
   };
 
   return (
@@ -112,7 +121,12 @@ const SideBar = () => {
           >
             {["All Tasks", "Completed", "Active", "Important"].map(
               (text, index) => (
-                <ListItem key={text} disablePadding sx={{ display: "block" }}>
+                <ListItem
+                  key={text}
+                  disablePadding
+                  sx={{ display: "block" }}
+                  onClick={handleSwitch}
+                >
                   <ListItemButton
                     sx={{
                       // minHeight: 48,
@@ -138,6 +152,23 @@ const SideBar = () => {
               )
             )}
           </List>
+          <DrawerFooter onClick={handleLogOut}>
+            <ListItemButton
+              sx={{
+                px: "0.8em",
+              }}
+            >
+              <LogoutIcon />
+              <Typography
+                sx={{
+                  display: open ? "block" : "none",
+                  px: 2.5,
+                }}
+              >
+                Log Out
+              </Typography>
+            </ListItemButton>
+          </DrawerFooter>
         </Drawer>
       </Paper>
     </Box>
